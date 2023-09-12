@@ -1,0 +1,382 @@
+---
+title: "Exploring article metadata: TC and TCQ"
+format: 
+  html:
+    toc: true
+    code-fold: show
+    code-link: true
+    code-tools: true
+    code-block-bg: true
+    theme: 
+      light: flatly
+      dark: darkly
+      
+execute: 
+  warning: false
+  error: false
+  freeze: auto 
+  
+---
+
+## Install packages and read in data
+
+Our source data is split between two CSV files, one for the journal "Technical Communication Quarterly" and one for "Technical Communication."
+
+```{r}
+# install and load packages
+
+#install.packages("tidyverse")
+library(tidyverse)
+library(readr)
+
+# read in both csv files
+tcq_data_raw <- read_csv("data/tcq_wos_data.csv")
+tc_data_raw <- read_csv("data/tc_wos_data.csv")
+```
+
+## Data preparation 
+
+Let's take a quick look at the data and clean up any issues. Some questions we might answer:
+
+* How many rows and columns are in each dataset?
+* What do the rows and columns correspond to?
+
+```{r}
+# shows dimensions (number of rows and columns)
+dim(tcq_data_raw) 
+dim(tc_data_raw)
+
+glimpse(tcq_data_raw)
+glimpse(tc_data_raw)
+```
+
+### Cleaning names
+
+We'll start by cleaning up the names with the janitor package. The convention is lowercase and joined by underscores. 
+
+```{r}
+#install.packages("janitor")
+library(janitor)
+
+# use help("library_name") for a description
+help("janitor") 
+
+
+# Syntax method 1 (on TCQ)
+tcq_data_raw <- clean_names(tcq_data_raw)
+
+glimpse(tcq_data_raw)
+
+
+# Syntax method 2 (on TC)
+tc_data_raw <- tc_data_raw %>%
+  clean_names()
+
+glimpse(tc_data_raw)
+
+```
+
+### Select columns of interest
+
+Now we'll use a function from a library called dplyr to retain only the columns we want. Let's keep:
+
+* author_full_names
+* article_title
+* source_title
+* abstract
+* cited_references
+* cited_reference_count
+* publication_year
+* publication_type
+
+First on TCQ
+
+```{r}
+library(dplyr)
+
+# the select function from dplyr on TCQ data
+tcq_clean <- tcq_data_raw %>%
+  select(author_full_names,
+         article_title,
+         source_title,
+         abstract,
+         cited_references,
+         cited_reference_count,
+         publication_year,
+         publication_type)
+
+glimpse(tcq_clean)
+
+```
+
+Now on TC
+
+```{r}
+# the select function from dplyr on TCQ data
+tc_clean <- tc_data_raw %>%
+  select(author_full_names,
+         article_title,
+         source_title,
+         abstract,
+         cited_references,
+         cited_reference_count,
+         publication_year,
+         publication_type)
+
+glimpse(tc_clean)
+```
+
+### Combine the two sets
+
+```{r}
+
+both_data <- rbind(tcq_clean, tc_clean)
+
+dim(both_data)
+```
+
+## Exploring the data
+
+### Some quick ways to examine at a high level
+
+```{r}
+# provides overview of numeric variables
+summary(both_data) 
+
+
+# overview of target column
+summary(both_data$publication_year)
+
+# for each column, shows data types and first few observations
+str(both_data) 
+
+# shows first few rows
+head(both_data)
+
+# shows the first n rows
+
+head(both_data, n = 10)
+
+#shows last few rows
+tail(both_data)
+
+# creates a frequency table for a categorical variable 
+table(both_data$publication_year) 
+
+```
+
+### Visualize
+
+Let's create some exploratory visualizations. 
+
+#### Visualize the articles published by year
+
+```{r}
+# count of articles by year
+ggplot(both_data, aes(x = publication_year)) +
+  geom_bar() +
+  labs(title = "Articles per Year in TC and TCQ",
+       X = "Publication Year",
+       Y = "Number of Articles") +
+  theme_light()
+```
+
+#### Add another variable to the display
+
+```{r}
+# count of articles by year, by journal
+ggplot(both_data, aes(x = publication_year, fill = source_title)) +
+  geom_bar() +
+  labs(title = "Articles per Year in TC and TCQ",
+       X = "Publication Year",
+       Y = "Number of Articles") +
+  theme_light()
+```
+
+#### Create two displays using facet wrap
+
+```{r}
+# count of articles by year, by journal
+ggplot(both_data, aes(x = publication_year)) +
+  geom_bar() +
+  labs(title = "Articles per Year in TC and TCQ",
+       X = "Publication Year",
+       Y = "Number of Articles") +
+   facet_wrap(~ source_title, ncol = 2) # Change ncol as needed
+ 
+```
+
+#### Spice things up with a theme from ggthemes
+
+Check out this [ggthemes gallery](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/)
+
+```{r}
+#install.packages("ggthemes")
+library(ggthemes)
+
+# count of articles by year, by journal
+ggplot(both_data, aes(x = publication_year)) +
+  geom_bar() +
+  labs(title = "Articles per Year in TC and TCQ",
+       X = "Publication Year",
+       Y = "Number of Articles") +
+   facet_wrap(~ source_title, ncol = 1) +
+  theme_economist()
+```
+
+
+```{r}
+# count of articles by year, by journal
+year_plot <- ggplot(both_data, aes(x = publication_year)) +
+  geom_bar() +
+  labs(title = "Articles per Year in TC and TCQ",
+       X = "Publication Year",
+       Y = "Number of Articles") +
+   facet_wrap(~ source_title, ncol = 1) +
+  theme_economist_white()
+year_plot
+```
+
+#### Add labels above the bars
+
+```{r}
+# add labels above the bars
+year_plot <- year_plot +
+  geom_text(stat = 'count', aes(label = after_stat(count)), vjust = -0.5, size = 4)
+
+year_plot
+```
+
+#### Save the chart
+
+```{r}
+help(ggsave)
+ggsave("plots/articles_barplot.png", 
+       plot = year_plot, 
+       width = 8, 
+       height = 6, 
+       dpi = 300,
+       bg = NULL)
+```
+
+#### Save our dataset
+
+```{r}
+# save as csv
+
+write.csv(both_data, "data_out/both_data.csv")
+
+save(both_data, file = "data_out/your_file.RData")
+
+```
+
+## Analyzing text columns
+
+Let's do some analysis on the article_title and abstract columns
+
+### View the text data
+```{r}
+head(both_data$article_title)
+
+head(both_data$abstract)
+```
+
+### Create a title_abstract column
+
+```{r}
+# using paste() to combine the two columns with a tilde separator; mutate to create a new column in the data
+ta_data <- both_data %>%
+  mutate(title_abstract = paste(article_title, abstract, sep = " ~ ")) 
+
+head(ta_data$title_abstract)
+```
+
+### Using tidytext to analyze word distribution
+
+We'll create a new dataframe in which each word-year pairing gets it's own row
+```{r}
+#install.packages("tidytext")
+library(tidytext)
+
+ta_words_bysource <- ta_data %>%
+  unnest_tokens(word, title_abstract) %>%
+  count(source_title, word, sort = TRUE)
+
+head(ta_words_bysource, n = 15)
+
+```
+
+
+Now we'll get the total word count for each source
+
+```{r}
+ta_words_total <- ta_words_bysource %>%
+  group_by(source_title) %>%
+  summarize(total = sum(n))
+
+head(ta_words_total)
+```
+
+Use join to add the total words by source as a new column to the source-specific word counts
+
+```{r}
+ta_words_year <- left_join(ta_words_bysource, ta_words_total)
+
+head(ta_words_year, n = 20)
+
+tail(ta_words_year, n = 20)
+```
+
+
+Visualize the distribution of words in each source
+
+```{r}
+ggplot(ta_words_year, aes(n/total, fill = source_title)) +
+  geom_histogram(show.legend = FALSE) +
+  xlim(NA, 0.0009) +
+  facet_wrap(~source_title, ncol = 2, scales = "free_y")
+```
+
+## TFIDF
+
+Term frequency - Inverse Document Frequency
+
+### Bind_tf_idf
+
+input: one row per term per document 
+output: ???
+
+```{r}
+ta_tf_idf <- ta_words_year %>%
+  bind_tf_idf(word, source_title, n)
+
+# most common words
+head(ta_tf_idf)
+
+# least common words
+tail(ta_tf_idf)
+```
+
+
+Arrange in descending order by tf-idf (highest tf-idf words)
+```{r}
+ta_tf_idf %>%
+  select(-total) %>%
+  arrange(desc(tf_idf))
+```
+
+### Visualize high tf-idf words in each journal
+```{r}
+library(forcats)
+
+ta_tf_idf %>%
+  group_by(source_title) %>%
+  slice_max(tf_idf, n = 25) %>%
+  ungroup() %>%
+  ggplot(aes(tf_idf, fct_reorder(word, tf_idf), fill = source_title)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~source_title, ncol = 2, scales = "free") +
+  labs(x = "tf-idf", y = NULL)
+```
+
+

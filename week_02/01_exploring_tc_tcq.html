@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Exploring article metadata: TC and TCQ</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="01_exploring_tc_tcq_files/libs/clipboard/clipboard.min.js"></script>
+<script src="01_exploring_tc_tcq_files/libs/quarto-html/quarto.js"></script>
+<script src="01_exploring_tc_tcq_files/libs/quarto-html/popper.min.js"></script>
+<script src="01_exploring_tc_tcq_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="01_exploring_tc_tcq_files/libs/quarto-html/anchor.min.js"></script>
+<link href="01_exploring_tc_tcq_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="01_exploring_tc_tcq_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="01_exploring_tc_tcq_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="01_exploring_tc_tcq_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="01_exploring_tc_tcq_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="01_exploring_tc_tcq_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="01_exploring_tc_tcq_files/libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+</head>
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+<li><a href="#install-packages-and-read-in-data" id="toc-install-packages-and-read-in-data" class="nav-link active" data-scroll-target="#install-packages-and-read-in-data">Install packages and read in data</a></li>
+  <li>
+<a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation">Data preparation</a>
+  <ul class="collapse">
+<li><a href="#cleaning-names" id="toc-cleaning-names" class="nav-link" data-scroll-target="#cleaning-names">Cleaning names</a></li>
+  <li><a href="#select-columns-of-interest" id="toc-select-columns-of-interest" class="nav-link" data-scroll-target="#select-columns-of-interest">Select columns of interest</a></li>
+  <li><a href="#combine-the-two-sets" id="toc-combine-the-two-sets" class="nav-link" data-scroll-target="#combine-the-two-sets">Combine the two sets</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#exploring-the-data" id="toc-exploring-the-data" class="nav-link" data-scroll-target="#exploring-the-data">Exploring the data</a>
+  <ul class="collapse">
+<li><a href="#some-quick-ways-to-examine-at-a-high-level" id="toc-some-quick-ways-to-examine-at-a-high-level" class="nav-link" data-scroll-target="#some-quick-ways-to-examine-at-a-high-level">Some quick ways to examine at a high level</a></li>
+  <li><a href="#visualize" id="toc-visualize" class="nav-link" data-scroll-target="#visualize">Visualize</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#analyzing-text-columns" id="toc-analyzing-text-columns" class="nav-link" data-scroll-target="#analyzing-text-columns">Analyzing text columns</a>
+  <ul class="collapse">
+<li><a href="#view-the-text-data" id="toc-view-the-text-data" class="nav-link" data-scroll-target="#view-the-text-data">View the text data</a></li>
+  <li><a href="#create-a-title_abstract-column" id="toc-create-a-title_abstract-column" class="nav-link" data-scroll-target="#create-a-title_abstract-column">Create a title_abstract column</a></li>
+  <li><a href="#using-tidytext-to-analyze-word-distribution" id="toc-using-tidytext-to-analyze-word-distribution" class="nav-link" data-scroll-target="#using-tidytext-to-analyze-word-distribution">Using tidytext to analyze word distribution</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#tfidf" id="toc-tfidf" class="nav-link" data-scroll-target="#tfidf">TFIDF</a>
+  <ul class="collapse">
+<li><a href="#bind_tf_idf" id="toc-bind_tf_idf" class="nav-link" data-scroll-target="#bind_tf_idf">Bind_tf_idf</a></li>
+  <li><a href="#visualize-high-tf-idf-words-in-each-journal" id="toc-visualize-high-tf-idf-words-in-each-journal" class="nav-link" data-scroll-target="#visualize-high-tf-idf-words-in-each-journal">Visualize high tf-idf words in each journal</a></li>
+  </ul>
+</li>
+  </ul></nav>
+</div>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Exploring article metadata: TC and TCQ</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header><section id="install-packages-and-read-in-data" class="level2"><h2 class="anchored" data-anchor-id="install-packages-and-read-in-data">Install packages and read in data</h2>
+<p>Our source data is split between two CSV files, one for the journal “Technical Communication Quarterly” and one for “Technical Communication.”</p>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install and load packages</span></span>
+<span></span>
+<span><span class="co">#install.packages("tidyverse")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># read in both csv files</span></span>
+<span><span class="va">tcq_data_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="st">"data/tcq_wos_data.csv"</span><span class="op">)</span></span>
+<span><span class="va">tc_data_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="st">"data/tc_wos_data.csv"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section><section id="data-preparation" class="level2"><h2 class="anchored" data-anchor-id="data-preparation">Data preparation</h2>
+<p>Let’s take a quick look at the data and clean up any issues. Some questions we might answer:</p>
+<ul>
+<li>How many rows and columns are in each dataset?</li>
+<li>What do the rows and columns correspond to?</li>
+</ul>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># shows dimensions (number of rows and columns)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">tcq_data_raw</span><span class="op">)</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code>[1] 582  22</code></pre>
+</div>
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">tc_data_raw</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code>[1] 332  69</code></pre>
+</div>
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">tcq_data_raw</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code>Rows: 582
+Columns: 22
+$ `Publication Type`           &lt;chr&gt; "J", "J", "J", "J", "J", "J", "J", "J", "…
+$ Authors                      &lt;chr&gt; "Fuglsby, BJ; Veeramoothoo, S", "Frost, E…
+$ `Author Full Names`          &lt;chr&gt; "Fuglsby, Brandi J.; Veeramoothoo, Saveen…
+$ `Article Title`              &lt;chr&gt; "Regulating Emotions for Social Action: E…
+$ `Source Title`               &lt;chr&gt; "TECHNICAL COMMUNICATION QUARTERLY", "TEC…
+$ `Document Type`              &lt;chr&gt; "Article", "Article", "Article", "Article…
+$ Abstract                     &lt;chr&gt; "This article describes students' emotion…
+$ `Cited References`           &lt;chr&gt; "Agboka Godwin Y., 2018, CITIZENSHIP ADVO…
+$ `Cited Reference Count`      &lt;dbl&gt; 32, 86, 54, 28, 66, 22, 27, 38, 5, 20, 50…
+$ `Times Cited, WoS Core`      &lt;dbl&gt; 0, 0, 1, 7, 7, 10, 11, 8, 0, 0, 8, 0, 9, …
+$ `Times Cited, All Databases` &lt;dbl&gt; 0, 0, 1, 7, 7, 10, 11, 8, 0, 0, 8, 0, 9, …
+$ `Publication Date`           &lt;chr&gt; "JAN 2", NA, NA, NA, NA, NA, NA, NA, NA, …
+$ `Publication Year`           &lt;dbl&gt; 2023, 2021, 2020, 2015, 2014, 2013, 2010,…
+$ Volume                       &lt;dbl&gt; 32, 30, 29, 24, 23, 22, 19, 18, 14, 29, 2…
+$ Issue                        &lt;dbl&gt; 1, 1, 2, 3, 3, 2, 3, 2, 1, 2, 4, 4, 1, 4,…
+$ `Start Page`                 &lt;chr&gt; "98", "48", "136", "217", "184", "172", "…
+$ `End Page`                   &lt;chr&gt; "113", "62", "154", "234", "206", "190", …
+$ `Article Number`             &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ DOI                          &lt;chr&gt; "10.1080/10572252.2022.2079725", "10.1080…
+$ `DOI Link`                   &lt;chr&gt; "http://dx.doi.org/10.1080/10572252.2022.…
+$ `Early Access Date`          &lt;chr&gt; "JUN 2022", NA, NA, NA, NA, NA, NA, NA, N…
+$ `Web of Science Record`      &lt;chr&gt; "View Full Record in Web of Science", "Vi…</code></pre>
+</div>
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">tc_data_raw</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code>Rows: 332
+Columns: 69
+$ `Publication Type`           &lt;chr&gt; "J", "J", "J", "J", "J", "J", "J", "J", "…
+$ Authors                      &lt;chr&gt; "Britt, BC; Britt, RK", "Davis, C", "Colt…
+$ `Author Full Names`          &lt;chr&gt; "Britt, Brian C.; Britt, Rebecca K.", "Da…
+$ `Book Author Full Names`     &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Group Authors`              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Article Title`              &lt;chr&gt; "The Roles of Medium and Narrative Believ…
+$ `Source Title`               &lt;chr&gt; "TECHNICAL COMMUNICATION", "TECHNICAL COM…
+$ `Book Series Title`          &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Book Series Subtitle`       &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ Language                     &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Document Type`              &lt;chr&gt; "Article", "Article", "Article", "Article…
+$ `Conference Title`           &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Conference Date`            &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Conference Location`        &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Conference Sponsor`         &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Conference Host`            &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Author Keywords`            &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Keywords Plus`              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ Abstract                     &lt;chr&gt; "Purpose: This study investigates the rol…
+$ Addresses                    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ Affiliations                 &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Reprint Addresses`          &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Email Addresses`            &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Researcher Ids`             &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ ORCIDs                       &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Funding Orgs`               &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Funding Name Preferred`     &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Funding Text`               &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Cited References`           &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Cited Reference Count`      &lt;dbl&gt; 82, 24, 73, 46, 30, 28, 12, 20, 27, 24, 7…
+$ `Times Cited, WoS Core`      &lt;dbl&gt; 1, 0, 4, 10, 4, 11, 0, 2, 19, 3, 3, 3, 0,…
+$ `Times Cited, All Databases` &lt;dbl&gt; 1, 0, 4, 10, 4, 11, 0, 2, 19, 3, 3, 3, 0,…
+$ `180 Day Usage Count`        &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Since 2013 Usage Count`     &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ Publisher                    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Publisher City`             &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Publisher Address`          &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ ISSN                         &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ eISSN                        &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ ISBN                         &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Journal Abbreviation`       &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Journal ISO Abbreviation`   &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Publication Date`           &lt;chr&gt; "AUG", "AUG", "FEB", "AUG", "NOV", "FEB",…
+$ `Publication Year`           &lt;dbl&gt; 2021, 2019, 2019, 2018, 2014, 2012, 2011,…
+$ Volume                       &lt;dbl&gt; 68, 66, 66, 65, 61, 59, 58, 54, 54, 54, 6…
+$ Issue                        &lt;dbl&gt; 3, 3, 1, 3, 4, 1, 4, 4, 3, 1, 4, 3, 3, 1,…
+$ `Part Number`                &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ Supplement                   &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Special Issue`              &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Meeting Abstract`           &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Start Page`                 &lt;chr&gt; "76", "272", "53", "293", "215", "1", "11…
+$ `End Page`                   &lt;chr&gt; "96", "283", "67", "308", "231", "7", "13…
+$ `Article Number`             &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ DOI                          &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `DOI Link`                   &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Book DOI`                   &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Early Access Date`          &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Number of Pages`            &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `WoS Categories`             &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Web of Science Index`       &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Research Areas`             &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `IDS Number`                 &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Pubmed Id`                  &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Open Access Designations`   &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Highly Cited Status`        &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Hot Paper Status`           &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Date of Export`             &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `UT (Unique WOS ID)`         &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ `Web of Science Record`      &lt;chr&gt; "View Full Record in Web of Science", "Vi…</code></pre>
+</div>
+</div>
+<section id="cleaning-names" class="level3"><h3 class="anchored" data-anchor-id="cleaning-names">Cleaning names</h3>
+<p>We’ll start by cleaning up the names with the janitor package. The convention is lowercase and joined by underscores.</p>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#install.packages("janitor")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sfirke/janitor">janitor</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># use help("library_name") for a description</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/help.html">help</a></span><span class="op">(</span><span class="st">"janitor"</span><span class="op">)</span> </span>
+<span></span>
+<span></span>
+<span><span class="co"># Syntax method 1 (on TCQ)</span></span>
+<span><span class="va">tcq_data_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://sfirke.github.io/janitor/reference/clean_names.html">clean_names</a></span><span class="op">(</span><span class="va">tcq_data_raw</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">tcq_data_raw</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code>Rows: 582
+Columns: 22
+$ publication_type          &lt;chr&gt; "J", "J", "J", "J", "J", "J", "J", "J", "J",…
+$ authors                   &lt;chr&gt; "Fuglsby, BJ; Veeramoothoo, S", "Frost, EA",…
+$ author_full_names         &lt;chr&gt; "Fuglsby, Brandi J.; Veeramoothoo, Saveena (…
+$ article_title             &lt;chr&gt; "Regulating Emotions for Social Action: Emot…
+$ source_title              &lt;chr&gt; "TECHNICAL COMMUNICATION QUARTERLY", "TECHNI…
+$ document_type             &lt;chr&gt; "Article", "Article", "Article", "Article", …
+$ abstract                  &lt;chr&gt; "This article describes students' emotional …
+$ cited_references          &lt;chr&gt; "Agboka Godwin Y., 2018, CITIZENSHIP ADVOCAC…
+$ cited_reference_count     &lt;dbl&gt; 32, 86, 54, 28, 66, 22, 27, 38, 5, 20, 50, 4…
+$ times_cited_wo_s_core     &lt;dbl&gt; 0, 0, 1, 7, 7, 10, 11, 8, 0, 0, 8, 0, 9, 0, …
+$ times_cited_all_databases &lt;dbl&gt; 0, 0, 1, 7, 7, 10, 11, 8, 0, 0, 8, 0, 9, 0, …
+$ publication_date          &lt;chr&gt; "JAN 2", NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ publication_year          &lt;dbl&gt; 2023, 2021, 2020, 2015, 2014, 2013, 2010, 20…
+$ volume                    &lt;dbl&gt; 32, 30, 29, 24, 23, 22, 19, 18, 14, 29, 28, …
+$ issue                     &lt;dbl&gt; 1, 1, 2, 3, 3, 2, 3, 2, 1, 2, 4, 4, 1, 4, 2,…
+$ start_page                &lt;chr&gt; "98", "48", "136", "217", "184", "172", "300…
+$ end_page                  &lt;chr&gt; "113", "62", "154", "234", "206", "190", "31…
+$ article_number            &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ doi                       &lt;chr&gt; "10.1080/10572252.2022.2079725", "10.1080/10…
+$ doi_link                  &lt;chr&gt; "http://dx.doi.org/10.1080/10572252.2022.207…
+$ early_access_date         &lt;chr&gt; "JUN 2022", NA, NA, NA, NA, NA, NA, NA, NA, …
+$ web_of_science_record     &lt;chr&gt; "View Full Record in Web of Science", "View …</code></pre>
+</div>
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Syntax method 2 (on TC)</span></span>
+<span><span class="va">tc_data_raw</span> <span class="op">&lt;-</span> <span class="va">tc_data_raw</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://sfirke.github.io/janitor/reference/clean_names.html">clean_names</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">tc_data_raw</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code>Rows: 332
+Columns: 69
+$ publication_type          &lt;chr&gt; "J", "J", "J", "J", "J", "J", "J", "J", "J",…
+$ authors                   &lt;chr&gt; "Britt, BC; Britt, RK", "Davis, C", "Colton,…
+$ author_full_names         &lt;chr&gt; "Britt, Brian C.; Britt, Rebecca K.", "Davis…
+$ book_author_full_names    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ group_authors             &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ article_title             &lt;chr&gt; "The Roles of Medium and Narrative Believabi…
+$ source_title              &lt;chr&gt; "TECHNICAL COMMUNICATION", "TECHNICAL COMMUN…
+$ book_series_title         &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ book_series_subtitle      &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ language                  &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ document_type             &lt;chr&gt; "Article", "Article", "Article", "Article", …
+$ conference_title          &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ conference_date           &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ conference_location       &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ conference_sponsor        &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ conference_host           &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ author_keywords           &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ keywords_plus             &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ abstract                  &lt;chr&gt; "Purpose: This study investigates the role o…
+$ addresses                 &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ affiliations              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ reprint_addresses         &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ email_addresses           &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ researcher_ids            &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ orci_ds                   &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ funding_orgs              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ funding_name_preferred    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ funding_text              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ cited_references          &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ cited_reference_count     &lt;dbl&gt; 82, 24, 73, 46, 30, 28, 12, 20, 27, 24, 72, …
+$ times_cited_wo_s_core     &lt;dbl&gt; 1, 0, 4, 10, 4, 11, 0, 2, 19, 3, 3, 3, 0, 4,…
+$ times_cited_all_databases &lt;dbl&gt; 1, 0, 4, 10, 4, 11, 0, 2, 19, 3, 3, 3, 0, 4,…
+$ x180_day_usage_count      &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ since_2013_usage_count    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ publisher                 &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ publisher_city            &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ publisher_address         &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ issn                      &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ e_issn                    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ isbn                      &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ journal_abbreviation      &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ journal_iso_abbreviation  &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ publication_date          &lt;chr&gt; "AUG", "AUG", "FEB", "AUG", "NOV", "FEB", "N…
+$ publication_year          &lt;dbl&gt; 2021, 2019, 2019, 2018, 2014, 2012, 2011, 20…
+$ volume                    &lt;dbl&gt; 68, 66, 66, 65, 61, 59, 58, 54, 54, 54, 68, …
+$ issue                     &lt;dbl&gt; 3, 3, 1, 3, 4, 1, 4, 4, 3, 1, 4, 3, 3, 1, 2,…
+$ part_number               &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ supplement                &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ special_issue             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ meeting_abstract          &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ start_page                &lt;chr&gt; "76", "272", "53", "293", "215", "1", "11", …
+$ end_page                  &lt;chr&gt; "96", "283", "67", "308", "231", "7", "13", …
+$ article_number            &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ doi                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ doi_link                  &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ book_doi                  &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ early_access_date         &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ number_of_pages           &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ wo_s_categories           &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ web_of_science_index      &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ research_areas            &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ids_number                &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ pubmed_id                 &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ open_access_designations  &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ highly_cited_status       &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ hot_paper_status          &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ date_of_export            &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ut_unique_wos_id          &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ web_of_science_record     &lt;chr&gt; "View Full Record in Web of Science", "View …</code></pre>
+</div>
+</div>
+</section><section id="select-columns-of-interest" class="level3"><h3 class="anchored" data-anchor-id="select-columns-of-interest">Select columns of interest</h3>
+<p>Now we’ll use a function from a library called dplyr to retain only the columns we want. Let’s keep:</p>
+<ul>
+<li>author_full_names</li>
+<li>article_title</li>
+<li>source_title</li>
+<li>abstract</li>
+<li>cited_references</li>
+<li>cited_reference_count</li>
+<li>publication_year</li>
+<li>publication_type</li>
+</ul>
+<p>First on TCQ</p>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># the select function from dplyr on TCQ data</span></span>
+<span><span class="va">tcq_clean</span> <span class="op">&lt;-</span> <span class="va">tcq_data_raw</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">author_full_names</span>,</span>
+<span>         <span class="va">article_title</span>,</span>
+<span>         <span class="va">source_title</span>,</span>
+<span>         <span class="va">abstract</span>,</span>
+<span>         <span class="va">cited_references</span>,</span>
+<span>         <span class="va">cited_reference_count</span>,</span>
+<span>         <span class="va">publication_year</span>,</span>
+<span>         <span class="va">publication_type</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">tcq_clean</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code>Rows: 582
+Columns: 8
+$ author_full_names     &lt;chr&gt; "Fuglsby, Brandi J.; Veeramoothoo, Saveena (Chak…
+$ article_title         &lt;chr&gt; "Regulating Emotions for Social Action: Emotiona…
+$ source_title          &lt;chr&gt; "TECHNICAL COMMUNICATION QUARTERLY", "TECHNICAL …
+$ abstract              &lt;chr&gt; "This article describes students' emotional inte…
+$ cited_references      &lt;chr&gt; "Agboka Godwin Y., 2018, CITIZENSHIP ADVOCACY; […
+$ cited_reference_count &lt;dbl&gt; 32, 86, 54, 28, 66, 22, 27, 38, 5, 20, 50, 4, 55…
+$ publication_year      &lt;dbl&gt; 2023, 2021, 2020, 2015, 2014, 2013, 2010, 2009, …
+$ publication_type      &lt;chr&gt; "J", "J", "J", "J", "J", "J", "J", "J", "J", "J"…</code></pre>
+</div>
+</div>
+<p>Now on TC</p>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># the select function from dplyr on TCQ data</span></span>
+<span><span class="va">tc_clean</span> <span class="op">&lt;-</span> <span class="va">tc_data_raw</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">author_full_names</span>,</span>
+<span>         <span class="va">article_title</span>,</span>
+<span>         <span class="va">source_title</span>,</span>
+<span>         <span class="va">abstract</span>,</span>
+<span>         <span class="va">cited_references</span>,</span>
+<span>         <span class="va">cited_reference_count</span>,</span>
+<span>         <span class="va">publication_year</span>,</span>
+<span>         <span class="va">publication_type</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">tc_clean</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code>Rows: 332
+Columns: 8
+$ author_full_names     &lt;chr&gt; "Britt, Brian C.; Britt, Rebecca K.", "Davis, Ca…
+$ article_title         &lt;chr&gt; "The Roles of Medium and Narrative Believability…
+$ source_title          &lt;chr&gt; "TECHNICAL COMMUNICATION", "TECHNICAL COMMUNICAT…
+$ abstract              &lt;chr&gt; "Purpose: This study investigates the role of ne…
+$ cited_references      &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ cited_reference_count &lt;dbl&gt; 82, 24, 73, 46, 30, 28, 12, 20, 27, 24, 72, 34, …
+$ publication_year      &lt;dbl&gt; 2021, 2019, 2019, 2018, 2014, 2012, 2011, 2007, …
+$ publication_type      &lt;chr&gt; "J", "J", "J", "J", "J", "J", "J", "J", "J", "J"…</code></pre>
+</div>
+</div>
+</section><section id="combine-the-two-sets" class="level3"><h3 class="anchored" data-anchor-id="combine-the-two-sets">Combine the two sets</h3>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">both_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">tcq_clean</span>, <span class="va">tc_clean</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">both_data</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code>[1] 914   8</code></pre>
+</div>
+</div>
+</section></section><section id="exploring-the-data" class="level2"><h2 class="anchored" data-anchor-id="exploring-the-data">Exploring the data</h2>
+<section id="some-quick-ways-to-examine-at-a-high-level" class="level3"><h3 class="anchored" data-anchor-id="some-quick-ways-to-examine-at-a-high-level">Some quick ways to examine at a high level</h3>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># provides overview of numeric variables</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">both_data</span><span class="op">)</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code> author_full_names  article_title      source_title         abstract        
+ Length:914         Length:914         Length:914         Length:914        
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+ cited_references   cited_reference_count publication_year publication_type  
+ Length:914         Min.   :  0.00        Min.   :2005     Length:914        
+ Class :character   1st Qu.: 18.00        1st Qu.:2008     Class :character  
+ Mode  :character   Median : 34.00        Median :2014     Mode  :character  
+                    Mean   : 35.59        Mean   :2014                       
+                    3rd Qu.: 51.00        3rd Qu.:2019                       
+                    Max.   :169.00        Max.   :2023                       </code></pre>
+</div>
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># overview of target column</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">both_data</span><span class="op">$</span><span class="va">publication_year</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   2005    2008    2014    2014    2019    2023 </code></pre>
+</div>
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># for each column, shows data types and first few observations</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">both_data</span><span class="op">)</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code>tibble [914 × 8] (S3: tbl_df/tbl/data.frame)
+ $ author_full_names    : chr [1:914] "Fuglsby, Brandi J.; Veeramoothoo, Saveena (Chakrika)" "Frost, Erin A." "Weber, Ryan" "Kreuter, Nate" ...
+ $ article_title        : chr [1:914] "Regulating Emotions for Social Action: Emotional Intelligence's Role in TPC" "Ultrasound, Gender, and Consent: An Apparent Feminist Analysis of Medical Imaging Rhetorics" "The News from Mars" "The US Intelligence Community's Mathematical Ideology of Technical Communication" ...
+ $ source_title         : chr [1:914] "TECHNICAL COMMUNICATION QUARTERLY" "TECHNICAL COMMUNICATION QUARTERLY" "TECHNICAL COMMUNICATION QUARTERLY" "TECHNICAL COMMUNICATION QUARTERLY" ...
+ $ abstract             : chr [1:914] "This article describes students' emotional intelligence (EI) development when participating in the Trans-Atlant"| __truncated__ "This article uses an apparent feminist approach to engage a two-part research question: First, does gender affe"| __truncated__ "Bruno Latour advocates for portrayals of science in the making but does not explain how the public can access t"| __truncated__ "Reading historical intelligence community documents primarily through the lens of Kenneth Burke's essay ''Seman"| __truncated__ ...
+ $ cited_references     : chr [1:914] "Agboka Godwin Y., 2018, CITIZENSHIP ADVOCACY; [Anonymous], 2007, SOCIAL JUSTICE THEOR; [Anonymous], 2020, T ATL"| __truncated__ "American Cancer Society, 2019, REC PROST CANC EARL; American College of Obstetricians and Gynecologists, 2019, "| __truncated__ "[Anonymous], 2007, J TECH WRIT COMMUN, DOI DOI 10.2190/TW.37.3.C; [Anonymous], 2001, WHAT SHOULD WE TEACH; [Ano"| __truncated__ "[Anonymous], 2005, REP PRES US; Barnard I, 2010, COLL COMPOS COMMUN, V61, P434; Best J., 2001, DAMNED LIES STAT"| __truncated__ ...
+ $ cited_reference_count: num [1:914] 32 86 54 28 66 22 27 38 5 20 ...
+ $ publication_year     : num [1:914] 2023 2021 2020 2015 2014 ...
+ $ publication_type     : chr [1:914] "J" "J" "J" "J" ...</code></pre>
+</div>
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># shows first few rows</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">both_data</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 8
+  author_full_names         article_title source_title abstract cited_references
+  &lt;chr&gt;                     &lt;chr&gt;         &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;           
+1 Fuglsby, Brandi J.; Veer… Regulating E… TECHNICAL C… This ar… Agboka Godwin Y…
+2 Frost, Erin A.            Ultrasound, … TECHNICAL C… This ar… American Cancer…
+3 Weber, Ryan               The News fro… TECHNICAL C… Bruno L… [Anonymous], 20…
+4 Kreuter, Nate             The US Intel… TECHNICAL C… Reading… [Anonymous], 20…
+5 Buehl, Jonathan           Toward an Et… TECHNICAL C… Over th… ANDERSON C, 199…
+6 Lauer, Claire             Examining th… TECHNICAL C… This ar… [Anonymous], SE…
+# ℹ 3 more variables: cited_reference_count &lt;dbl&gt;, publication_year &lt;dbl&gt;,
+#   publication_type &lt;chr&gt;</code></pre>
+</div>
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># shows the first n rows</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">both_data</span>, n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 8
+   author_full_names        article_title source_title abstract cited_references
+   &lt;chr&gt;                    &lt;chr&gt;         &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;           
+ 1 Fuglsby, Brandi J.; Vee… Regulating E… TECHNICAL C… This ar… Agboka Godwin Y…
+ 2 Frost, Erin A.           Ultrasound, … TECHNICAL C… This ar… American Cancer…
+ 3 Weber, Ryan              The News fro… TECHNICAL C… Bruno L… [Anonymous], 20…
+ 4 Kreuter, Nate            The US Intel… TECHNICAL C… Reading… [Anonymous], 20…
+ 5 Buehl, Jonathan          Toward an Et… TECHNICAL C… Over th… ANDERSON C, 199…
+ 6 Lauer, Claire            Examining th… TECHNICAL C… This ar… [Anonymous], SE…
+ 7 Ding, Huiling            Technical Co… TECHNICAL C… In this… [Anonymous], 20…
+ 8 Kynell, Teresa; Tebeaux… The Associat… TECHNICAL C… This ar… Anderson P., 19…
+ 9 Kitalong, Karla Saari    Working with… TECHNICAL C… &lt;NA&gt;     ALLEN N, 2002, …
+10 Pihlaja, Beau            Rhetoric, Te… TECHNICAL C… &lt;NA&gt;     Agboka Godwin, …
+# ℹ 3 more variables: cited_reference_count &lt;dbl&gt;, publication_year &lt;dbl&gt;,
+#   publication_type &lt;chr&gt;</code></pre>
+</div>
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#shows last few rows</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="va">both_data</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 8
+  author_full_names         article_title source_title abstract cited_references
+  &lt;chr&gt;                     &lt;chr&gt;         &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;           
+1 Wagner, Christian; Schro… Capabilities… TECHNICAL C… Purpose… &lt;NA&gt;            
+2 Lentz, Leo; De Jong, Men… How Do Exper… TECHNICAL C… Discuss… &lt;NA&gt;            
+3 Rife, Martine Courant     Technical co… TECHNICAL C… Maintai… &lt;NA&gt;            
+4 Mott, Richard K.; Ford, … The converge… TECHNICAL C… States … &lt;NA&gt;            
+5 Thrush, Emily A.; Hooper… Industry and… TECHNICAL C… Details… &lt;NA&gt;            
+6 Theofanos, MF; Redish, J  Helping low-… TECHNICAL C… This is… &lt;NA&gt;            
+# ℹ 3 more variables: cited_reference_count &lt;dbl&gt;, publication_year &lt;dbl&gt;,
+#   publication_type &lt;chr&gt;</code></pre>
+</div>
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># creates a frequency table for a categorical variable </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">both_data</span><span class="op">$</span><span class="va">publication_year</span><span class="op">)</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code>
+2005 2006 2007 2008 2009 2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 2020 
+  68   53   69   49   42   39   27   42   34   35   41   41   48   52   60   58 
+2021 2022 2023 
+  56   53   47 </code></pre>
+</div>
+</div>
+</section><section id="visualize" class="level3"><h3 class="anchored" data-anchor-id="visualize">Visualize</h3>
+<p>Let’s create some exploratory visualizations.</p>
+<section id="visualize-the-articles-published-by-year" class="level4"><h4 class="anchored" data-anchor-id="visualize-the-articles-published-by-year">Visualize the articles published by year</h4>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># count of articles by year</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">both_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">publication_year</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Articles per Year in TC and TCQ"</span>,</span>
+<span>       X <span class="op">=</span> <span class="st">"Publication Year"</span>,</span>
+<span>       Y <span class="op">=</span> <span class="st">"Number of Articles"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_light</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
+<p><img src="01_exploring_tc_tcq_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section><section id="add-another-variable-to-the-display" class="level4"><h4 class="anchored" data-anchor-id="add-another-variable-to-the-display">Add another variable to the display</h4>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># count of articles by year, by journal</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">both_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">publication_year</span>, fill <span class="op">=</span> <span class="va">source_title</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Articles per Year in TC and TCQ"</span>,</span>
+<span>       X <span class="op">=</span> <span class="st">"Publication Year"</span>,</span>
+<span>       Y <span class="op">=</span> <span class="st">"Number of Articles"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_light</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
+<p><img src="01_exploring_tc_tcq_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section><section id="create-two-displays-using-facet-wrap" class="level4"><h4 class="anchored" data-anchor-id="create-two-displays-using-facet-wrap">Create two displays using facet wrap</h4>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># count of articles by year, by journal</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">both_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">publication_year</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Articles per Year in TC and TCQ"</span>,</span>
+<span>       X <span class="op">=</span> <span class="st">"Publication Year"</span>,</span>
+<span>       Y <span class="op">=</span> <span class="st">"Number of Articles"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">source_title</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="co"># Change ncol as needed</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
+<p><img src="01_exploring_tc_tcq_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section><section id="spice-things-up-with-a-theme-from-ggthemes" class="level4"><h4 class="anchored" data-anchor-id="spice-things-up-with-a-theme-from-ggthemes">Spice things up with a theme from ggthemes</h4>
+<p>Check out this <a href="https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/">ggthemes gallery</a></p>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#install.packages("ggthemes")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jrnold/ggthemes">ggthemes</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># count of articles by year, by journal</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">both_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">publication_year</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Articles per Year in TC and TCQ"</span>,</span>
+<span>       X <span class="op">=</span> <span class="st">"Publication Year"</span>,</span>
+<span>       Y <span class="op">=</span> <span class="st">"Number of Articles"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">source_title</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggthemes/man/theme_economist.html">theme_economist</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
+<p><img src="01_exploring_tc_tcq_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># count of articles by year, by journal</span></span>
+<span><span class="va">year_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">both_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">publication_year</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Articles per Year in TC and TCQ"</span>,</span>
+<span>       X <span class="op">=</span> <span class="st">"Publication Year"</span>,</span>
+<span>       Y <span class="op">=</span> <span class="st">"Number of Articles"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">source_title</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggthemes/man/theme_economist.html">theme_economist_white</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">year_plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
+<p><img src="01_exploring_tc_tcq_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section><section id="add-labels-above-the-bars" class="level4"><h4 class="anchored" data-anchor-id="add-labels-above-the-bars">Add labels above the bars</h4>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># add labels above the bars</span></span>
+<span><span class="va">year_plot</span> <span class="op">&lt;-</span> <span class="va">year_plot</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">'count'</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html">after_stat</a></span><span class="op">(</span><span class="va">count</span><span class="op">)</span><span class="op">)</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span>, size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">year_plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
+<p><img src="01_exploring_tc_tcq_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section><section id="save-the-chart" class="level4"><h4 class="anchored" data-anchor-id="save-the-chart">Save the chart</h4>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/help.html">help</a></span><span class="op">(</span><span class="va">ggsave</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="st">"plots/articles_barplot.png"</span>, </span>
+<span>       plot <span class="op">=</span> <span class="va">year_plot</span>, </span>
+<span>       width <span class="op">=</span> <span class="fl">8</span>, </span>
+<span>       height <span class="op">=</span> <span class="fl">6</span>, </span>
+<span>       dpi <span class="op">=</span> <span class="fl">300</span>,</span>
+<span>       bg <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section><section id="save-our-dataset" class="level4"><h4 class="anchored" data-anchor-id="save-our-dataset">Save our dataset</h4>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># save as csv</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.csv</a></span><span class="op">(</span><span class="va">both_data</span>, <span class="st">"data_out/both_data.csv"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">both_data</span>, file <span class="op">=</span> <span class="st">"data_out/your_file.RData"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section></section></section><section id="analyzing-text-columns" class="level2"><h2 class="anchored" data-anchor-id="analyzing-text-columns">Analyzing text columns</h2>
+<p>Let’s do some analysis on the article_title and abstract columns</p>
+<section id="view-the-text-data" class="level3"><h3 class="anchored" data-anchor-id="view-the-text-data">View the text data</h3>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">both_data</span><span class="op">$</span><span class="va">article_title</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code>[1] "Regulating Emotions for Social Action: Emotional Intelligence's Role in TPC"                                                 
+[2] "Ultrasound, Gender, and Consent: An Apparent Feminist Analysis of Medical Imaging Rhetorics"                                 
+[3] "The News from Mars"                                                                                                          
+[4] "The US Intelligence Community's Mathematical Ideology of Technical Communication"                                            
+[5] "Toward an Ethical Rhetoric of the Digital Scientific Image: Learning From the Era When Science Met Photoshop"                
+[6] "Examining the Effect of Reflective Assessment on the Quality of Visual Design Assignments in the Technical Writing Classroom"</code></pre>
+</div>
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">both_data</span><span class="op">$</span><span class="va">abstract</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code>[1] "This article describes students' emotional intelligence (EI) development when participating in the Trans-Atlantic and Pacific Project (TAPP) in two technical and professional communication (TPC) courses. The researchers used modified grounded theory to compile the emotions used for coding students' weekly reflections, and content analyzed how the TAPP experience affected students' EI development. Overall, the article emphasizes the importance of supporting TPC students' EI development in low-stakes environments since EI directly impacted their actions when collaborating."                                                                                                                                                                                                                                                                                                             
+[2] "This article uses an apparent feminist approach to engage a two-part research question: First, does gender affect the frequency with which people become subjects of medical digital imaging? Second, how do the subjects of medical digital imaging become persuaded to accept this role? Engaging with medical imaging and the technical communication surrounding it as an assemblage of technical rhetorics (Frost &amp; Eble) and thus a technology, this project shows that women are more commonly scanned as a result of social biases. Further, this article argues that the ubiquity of scanning of women's bodies has implications for political agency and privacy and for technical communicators' understandings of efficiency. This study is preliminary but presents compelling evidence that further research on the technical communication surrounding gender and medical imaging is necessary."
+[3] "Bruno Latour advocates for portrayals of science in the making but does not explain how the public can access these portrayals. This article addresses that gap by analyzing how 199 press releases from NASA's Curiosity mission depict science. Results indicate that the releases often cover Curiosity's tools and activities, occasionally feature scientists at work, and rarely mention controversies. Ultimately, these press releases provide the public an engaging but partial perspective on science in the making."                                                                                                                                                                                                                                                                                                                                                                               
+[4] "Reading historical intelligence community documents primarily through the lens of Kenneth Burke's essay ''Semantic and Poetic Meaning,'' this article explores the history and stakes of the intelligence community's ongoing commitment to a problematic model of language use. The essay argues that the intelligence community's pursuit of a ''mathematical'' ideology of language is an attempt to render language ''neutral'' and to divorce rhetoric from ethics in ways that Burke anticipated, and with negative consequences for the generation of written intelligence reports and national policy decisions."                                                                                                                                                                                                                                                                                      
+[5] "Over the past two decades, scientific editors have attempted to correct mistaken'' assumptions about scientific images and to curb unethical image-manipulation practices. Reactions to the advent and abuse of image-adjustment software (such as Adobe Photoshop) reveal the complex relations among visual representations, scientific credibility, and epistemic rhetoric. Perelman and OlbrechtsTyteca's model of argumentation provides a flexible system for understanding these relations and for teaching students to use scientific images ethically and effectively."                                                                                                                                                                                                                                                                                                                               
+[6] "This article examines the role that reflective assessment plays in contributing to the quality of students' visual designs. Students who are required to account for their rhetorical decisions in the design of a document benefit from the practice of verbalizing those decisions. However, this study shows that students who engage in reflective assessment actually produce stronger visual designs as well. This effect should help determine the extent to which such assessments should be included in the classroom."                                                                                                                                                                                                                                                                                                                                                                               </code></pre>
+</div>
+</div>
+</section><section id="create-a-title_abstract-column" class="level3"><h3 class="anchored" data-anchor-id="create-a-title_abstract-column">Create a title_abstract column</h3>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># using paste() to combine the two columns with a tilde separator; mutate to create a new column in the data</span></span>
+<span><span class="va">ta_data</span> <span class="op">&lt;-</span> <span class="va">both_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>title_abstract <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">article_title</span>, <span class="va">abstract</span>, sep <span class="op">=</span> <span class="st">" ~ "</span><span class="op">)</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ta_data</span><span class="op">$</span><span class="va">title_abstract</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code>[1] "Regulating Emotions for Social Action: Emotional Intelligence's Role in TPC ~ This article describes students' emotional intelligence (EI) development when participating in the Trans-Atlantic and Pacific Project (TAPP) in two technical and professional communication (TPC) courses. The researchers used modified grounded theory to compile the emotions used for coding students' weekly reflections, and content analyzed how the TAPP experience affected students' EI development. Overall, the article emphasizes the importance of supporting TPC students' EI development in low-stakes environments since EI directly impacted their actions when collaborating."                                                                                                                                                                                                                                                                                                                             
+[2] "Ultrasound, Gender, and Consent: An Apparent Feminist Analysis of Medical Imaging Rhetorics ~ This article uses an apparent feminist approach to engage a two-part research question: First, does gender affect the frequency with which people become subjects of medical digital imaging? Second, how do the subjects of medical digital imaging become persuaded to accept this role? Engaging with medical imaging and the technical communication surrounding it as an assemblage of technical rhetorics (Frost &amp; Eble) and thus a technology, this project shows that women are more commonly scanned as a result of social biases. Further, this article argues that the ubiquity of scanning of women's bodies has implications for political agency and privacy and for technical communicators' understandings of efficiency. This study is preliminary but presents compelling evidence that further research on the technical communication surrounding gender and medical imaging is necessary."
+[3] "The News from Mars ~ Bruno Latour advocates for portrayals of science in the making but does not explain how the public can access these portrayals. This article addresses that gap by analyzing how 199 press releases from NASA's Curiosity mission depict science. Results indicate that the releases often cover Curiosity's tools and activities, occasionally feature scientists at work, and rarely mention controversies. Ultimately, these press releases provide the public an engaging but partial perspective on science in the making."                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+[4] "The US Intelligence Community's Mathematical Ideology of Technical Communication ~ Reading historical intelligence community documents primarily through the lens of Kenneth Burke's essay ''Semantic and Poetic Meaning,'' this article explores the history and stakes of the intelligence community's ongoing commitment to a problematic model of language use. The essay argues that the intelligence community's pursuit of a ''mathematical'' ideology of language is an attempt to render language ''neutral'' and to divorce rhetoric from ethics in ways that Burke anticipated, and with negative consequences for the generation of written intelligence reports and national policy decisions."                                                                                                                                                                                                                                                                                                 
+[5] "Toward an Ethical Rhetoric of the Digital Scientific Image: Learning From the Era When Science Met Photoshop ~ Over the past two decades, scientific editors have attempted to correct mistaken'' assumptions about scientific images and to curb unethical image-manipulation practices. Reactions to the advent and abuse of image-adjustment software (such as Adobe Photoshop) reveal the complex relations among visual representations, scientific credibility, and epistemic rhetoric. Perelman and OlbrechtsTyteca's model of argumentation provides a flexible system for understanding these relations and for teaching students to use scientific images ethically and effectively."                                                                                                                                                                                                                                                                                                              
+[6] "Examining the Effect of Reflective Assessment on the Quality of Visual Design Assignments in the Technical Writing Classroom ~ This article examines the role that reflective assessment plays in contributing to the quality of students' visual designs. Students who are required to account for their rhetorical decisions in the design of a document benefit from the practice of verbalizing those decisions. However, this study shows that students who engage in reflective assessment actually produce stronger visual designs as well. This effect should help determine the extent to which such assessments should be included in the classroom."                                                                                                                                                                                                                                                                                                                                              </code></pre>
+</div>
+</div>
+</section><section id="using-tidytext-to-analyze-word-distribution" class="level3"><h3 class="anchored" data-anchor-id="using-tidytext-to-analyze-word-distribution">Using tidytext to analyze word distribution</h3>
+<p>We’ll create a new dataframe in which each word-year pairing gets it’s own row</p>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#install.packages("tidytext")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/juliasilge/tidytext">tidytext</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ta_words_bysource</span> <span class="op">&lt;-</span> <span class="va">ta_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/tidytext/man/unnest_tokens.html">unnest_tokens</a></span><span class="op">(</span><span class="va">word</span>, <span class="va">title_abstract</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span><span class="op">(</span><span class="va">source_title</span>, <span class="va">word</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ta_words_bysource</span>, n <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 15 × 3
+   source_title                      word          n
+   &lt;chr&gt;                             &lt;chr&gt;     &lt;int&gt;
+ 1 TECHNICAL COMMUNICATION           the        2504
+ 2 TECHNICAL COMMUNICATION           and        2269
+ 3 TECHNICAL COMMUNICATION           of         2000
+ 4 TECHNICAL COMMUNICATION QUARTERLY the        1873
+ 5 TECHNICAL COMMUNICATION QUARTERLY and        1755
+ 6 TECHNICAL COMMUNICATION QUARTERLY of         1566
+ 7 TECHNICAL COMMUNICATION           to         1405
+ 8 TECHNICAL COMMUNICATION           a          1187
+ 9 TECHNICAL COMMUNICATION           in         1159
+10 TECHNICAL COMMUNICATION QUARTERLY in         1042
+11 TECHNICAL COMMUNICATION QUARTERLY to          953
+12 TECHNICAL COMMUNICATION QUARTERLY a           850
+13 TECHNICAL COMMUNICATION           technical   717
+14 TECHNICAL COMMUNICATION           for         659
+15 TECHNICAL COMMUNICATION           that        575</code></pre>
+</div>
+</div>
+<p>Now we’ll get the total word count for each source</p>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb50"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ta_words_total</span> <span class="op">&lt;-</span> <span class="va">ta_words_bysource</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">source_title</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ta_words_total</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  source_title                      total
+  &lt;chr&gt;                             &lt;int&gt;
+1 TECHNICAL COMMUNICATION           53475
+2 TECHNICAL COMMUNICATION QUARTERLY 39986</code></pre>
+</div>
+</div>
+<p>Use join to add the total words by source as a new column to the source-specific word counts</p>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb52"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ta_words_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">ta_words_bysource</span>, <span class="va">ta_words_total</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ta_words_year</span>, n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 4
+   source_title                      word              n total
+   &lt;chr&gt;                             &lt;chr&gt;         &lt;int&gt; &lt;int&gt;
+ 1 TECHNICAL COMMUNICATION           the            2504 53475
+ 2 TECHNICAL COMMUNICATION           and            2269 53475
+ 3 TECHNICAL COMMUNICATION           of             2000 53475
+ 4 TECHNICAL COMMUNICATION QUARTERLY the            1873 39986
+ 5 TECHNICAL COMMUNICATION QUARTERLY and            1755 39986
+ 6 TECHNICAL COMMUNICATION QUARTERLY of             1566 39986
+ 7 TECHNICAL COMMUNICATION           to             1405 53475
+ 8 TECHNICAL COMMUNICATION           a              1187 53475
+ 9 TECHNICAL COMMUNICATION           in             1159 53475
+10 TECHNICAL COMMUNICATION QUARTERLY in             1042 39986
+11 TECHNICAL COMMUNICATION QUARTERLY to              953 39986
+12 TECHNICAL COMMUNICATION QUARTERLY a               850 39986
+13 TECHNICAL COMMUNICATION           technical       717 53475
+14 TECHNICAL COMMUNICATION           for             659 53475
+15 TECHNICAL COMMUNICATION           that            575 53475
+16 TECHNICAL COMMUNICATION QUARTERLY technical       561 39986
+17 TECHNICAL COMMUNICATION QUARTERLY for             535 39986
+18 TECHNICAL COMMUNICATION QUARTERLY communication   534 39986
+19 TECHNICAL COMMUNICATION QUARTERLY this            516 39986
+20 TECHNICAL COMMUNICATION           communication   512 53475</code></pre>
+</div>
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb54"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="va">ta_words_year</span>, n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 4
+   source_title                      word                       n total
+   &lt;chr&gt;                             &lt;chr&gt;                  &lt;int&gt; &lt;int&gt;
+ 1 TECHNICAL COMMUNICATION QUARTERLY wishes                     1 39986
+ 2 TECHNICAL COMMUNICATION QUARTERLY witnessed                  1 39986
+ 3 TECHNICAL COMMUNICATION QUARTERLY wolf                       1 39986
+ 4 TECHNICAL COMMUNICATION QUARTERLY womanhood                  1 39986
+ 5 TECHNICAL COMMUNICATION QUARTERLY wonder                     1 39986
+ 6 TECHNICAL COMMUNICATION QUARTERLY work's                     1 39986
+ 7 TECHNICAL COMMUNICATION QUARTERLY workshops                  1 39986
+ 8 TECHNICAL COMMUNICATION QUARTERLY world's                    1 39986
+ 9 TECHNICAL COMMUNICATION QUARTERLY worried                    1 39986
+10 TECHNICAL COMMUNICATION QUARTERLY worth                      1 39986
+11 TECHNICAL COMMUNICATION QUARTERLY writer's                   1 39986
+12 TECHNICAL COMMUNICATION QUARTERLY writers'organizational     1 39986
+13 TECHNICAL COMMUNICATION QUARTERLY wrongdoing                 1 39986
+14 TECHNICAL COMMUNICATION QUARTERLY wuwt                       1 39986
+15 TECHNICAL COMMUNICATION QUARTERLY xml                        1 39986
+16 TECHNICAL COMMUNICATION QUARTERLY york                       1 39986
+17 TECHNICAL COMMUNICATION QUARTERLY young                      1 39986
+18 TECHNICAL COMMUNICATION QUARTERLY youtubers                  1 39986
+19 TECHNICAL COMMUNICATION QUARTERLY yoututorial                1 39986
+20 TECHNICAL COMMUNICATION QUARTERLY zika                       1 39986</code></pre>
+</div>
+</div>
+<p>Visualize the distribution of words in each source</p>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb56"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">ta_words_year</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">n</span><span class="op">/</span><span class="va">total</span>, fill <span class="op">=</span> <span class="va">source_title</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>show.legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">0.0009</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">source_title</span>, ncol <span class="op">=</span> <span class="fl">2</span>, scales <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
+<p><img src="01_exploring_tc_tcq_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section></section><section id="tfidf" class="level2"><h2 class="anchored" data-anchor-id="tfidf">TFIDF</h2>
+<p>Term frequency - Inverse Document Frequency</p>
+<section id="bind_tf_idf" class="level3"><h3 class="anchored" data-anchor-id="bind_tf_idf">Bind_tf_idf</h3>
+<p>input: one row per term per document output: ???</p>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb57"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ta_tf_idf</span> <span class="op">&lt;-</span> <span class="va">ta_words_year</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/tidytext/man/bind_tf_idf.html">bind_tf_idf</a></span><span class="op">(</span><span class="va">word</span>, <span class="va">source_title</span>, <span class="va">n</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># most common words</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ta_tf_idf</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 7
+  source_title                      word      n total     tf   idf tf_idf
+  &lt;chr&gt;                             &lt;chr&gt; &lt;int&gt; &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+1 TECHNICAL COMMUNICATION           the    2504 53475 0.0468     0      0
+2 TECHNICAL COMMUNICATION           and    2269 53475 0.0424     0      0
+3 TECHNICAL COMMUNICATION           of     2000 53475 0.0374     0      0
+4 TECHNICAL COMMUNICATION QUARTERLY the    1873 39986 0.0468     0      0
+5 TECHNICAL COMMUNICATION QUARTERLY and    1755 39986 0.0439     0      0
+6 TECHNICAL COMMUNICATION QUARTERLY of     1566 39986 0.0392     0      0</code></pre>
+</div>
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb59"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># least common words</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="va">ta_tf_idf</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 7
+  source_title                      word           n total      tf   idf  tf_idf
+  &lt;chr&gt;                             &lt;chr&gt;      &lt;int&gt; &lt;int&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+1 TECHNICAL COMMUNICATION QUARTERLY xml            1 39986 2.50e-5 0     0      
+2 TECHNICAL COMMUNICATION QUARTERLY york           1 39986 2.50e-5 0     0      
+3 TECHNICAL COMMUNICATION QUARTERLY young          1 39986 2.50e-5 0     0      
+4 TECHNICAL COMMUNICATION QUARTERLY youtubers      1 39986 2.50e-5 0.693 1.73e-5
+5 TECHNICAL COMMUNICATION QUARTERLY yoututori…     1 39986 2.50e-5 0.693 1.73e-5
+6 TECHNICAL COMMUNICATION QUARTERLY zika           1 39986 2.50e-5 0.693 1.73e-5</code></pre>
+</div>
+</div>
+<p>Arrange in descending order by tf-idf (highest tf-idf words)</p>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ta_tf_idf</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">total</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">tf_idf</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 11,261 × 6
+   source_title                      word            n       tf   idf   tf_idf
+   &lt;chr&gt;                             &lt;chr&gt;       &lt;int&gt;    &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+ 1 TECHNICAL COMMUNICATION QUARTERLY essay          21 0.000525 0.693 0.000364
+ 2 TECHNICAL COMMUNICATION           xr             27 0.000505 0.693 0.000350
+ 3 TECHNICAL COMMUNICATION QUARTERLY comics         20 0.000500 0.693 0.000347
+ 4 TECHNICAL COMMUNICATION QUARTERLY discursive     17 0.000425 0.693 0.000295
+ 5 TECHNICAL COMMUNICATION QUARTERLY rhetorics      15 0.000375 0.693 0.000260
+ 6 TECHNICAL COMMUNICATION QUARTERLY guest          14 0.000350 0.693 0.000243
+ 7 TECHNICAL COMMUNICATION           slides         18 0.000337 0.693 0.000233
+ 8 TECHNICAL COMMUNICATION QUARTERLY composition    12 0.000300 0.693 0.000208
+ 9 TECHNICAL COMMUNICATION QUARTERLY queer          12 0.000300 0.693 0.000208
+10 TECHNICAL COMMUNICATION           apps           16 0.000299 0.693 0.000207
+# ℹ 11,251 more rows</code></pre>
+</div>
+</div>
+</section><section id="visualize-high-tf-idf-words-in-each-journal" class="level3"><h3 class="anchored" data-anchor-id="visualize-high-tf-idf-words-in-each-journal">Visualize high tf-idf words in each journal</h3>
+<div class="cell">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb63"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://forcats.tidyverse.org/">forcats</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ta_tf_idf</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">source_title</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice_max</a></span><span class="op">(</span><span class="va">tf_idf</span>, n <span class="op">=</span> <span class="fl">25</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">tf_idf</span>, <span class="fu"><a href="https://forcats.tidyverse.org/reference/fct_reorder.html">fct_reorder</a></span><span class="op">(</span><span class="va">word</span>, <span class="va">tf_idf</span><span class="op">)</span>, fill <span class="op">=</span> <span class="va">source_title</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span>show.legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">source_title</span>, ncol <span class="op">=</span> <span class="fl">2</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"tf-idf"</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
+<p><img src="01_exploring_tc_tcq_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<!-- -->
+
+</section></section></main><!-- /main column --><script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb64" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Exploring article metadata: TC and TCQ"</span></span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: show</span></span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-bg: true</span></span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: </span></span>
+<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a><span class="co">      light: flatly</span></span>
+<span id="cb64-12"><a href="#cb64-12" aria-hidden="true" tabindex="-1"></a><span class="co">      dark: darkly</span></span>
+<span id="cb64-13"><a href="#cb64-13" aria-hidden="true" tabindex="-1"></a><span class="co">      </span></span>
+<span id="cb64-14"><a href="#cb64-14" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span><span class="co"> </span></span>
+<span id="cb64-15"><a href="#cb64-15" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb64-16"><a href="#cb64-16" aria-hidden="true" tabindex="-1"></a><span class="co">  error: false</span></span>
+<span id="cb64-17"><a href="#cb64-17" aria-hidden="true" tabindex="-1"></a><span class="co">  freeze: auto </span></span>
+<span id="cb64-18"><a href="#cb64-18" aria-hidden="true" tabindex="-1"></a><span class="co">  </span></span>
+<span id="cb64-19"><a href="#cb64-19" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb64-20"><a href="#cb64-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-21"><a href="#cb64-21" aria-hidden="true" tabindex="-1"></a><span class="fu">## Install packages and read in data</span></span>
+<span id="cb64-22"><a href="#cb64-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-23"><a href="#cb64-23" aria-hidden="true" tabindex="-1"></a>Our source data is split between two CSV files, one for the journal "Technical Communication Quarterly" and one for "Technical Communication."</span>
+<span id="cb64-24"><a href="#cb64-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-27"><a href="#cb64-27" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-28"><a href="#cb64-28" aria-hidden="true" tabindex="-1"></a><span class="co"># install and load packages</span></span>
+<span id="cb64-29"><a href="#cb64-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-30"><a href="#cb64-30" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("tidyverse")</span></span>
+<span id="cb64-31"><a href="#cb64-31" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb64-32"><a href="#cb64-32" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb64-33"><a href="#cb64-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-34"><a href="#cb64-34" aria-hidden="true" tabindex="-1"></a><span class="co"># read in both csv files</span></span>
+<span id="cb64-35"><a href="#cb64-35" aria-hidden="true" tabindex="-1"></a>tcq_data_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tcq_wos_data.csv"</span>)</span>
+<span id="cb64-36"><a href="#cb64-36" aria-hidden="true" tabindex="-1"></a>tc_data_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tc_wos_data.csv"</span>)</span>
+<span id="cb64-37"><a href="#cb64-37" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-38"><a href="#cb64-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-39"><a href="#cb64-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## Data preparation </span></span>
+<span id="cb64-40"><a href="#cb64-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-41"><a href="#cb64-41" aria-hidden="true" tabindex="-1"></a>Let's take a quick look at the data and clean up any issues. Some questions we might answer:</span>
+<span id="cb64-42"><a href="#cb64-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-43"><a href="#cb64-43" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>How many rows and columns are in each dataset?</span>
+<span id="cb64-44"><a href="#cb64-44" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>What do the rows and columns correspond to?</span>
+<span id="cb64-45"><a href="#cb64-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-48"><a href="#cb64-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-49"><a href="#cb64-49" aria-hidden="true" tabindex="-1"></a><span class="co"># shows dimensions (number of rows and columns)</span></span>
+<span id="cb64-50"><a href="#cb64-50" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tcq_data_raw) </span>
+<span id="cb64-51"><a href="#cb64-51" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tc_data_raw)</span>
+<span id="cb64-52"><a href="#cb64-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-53"><a href="#cb64-53" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(tcq_data_raw)</span>
+<span id="cb64-54"><a href="#cb64-54" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(tc_data_raw)</span>
+<span id="cb64-55"><a href="#cb64-55" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-56"><a href="#cb64-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-57"><a href="#cb64-57" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cleaning names</span></span>
+<span id="cb64-58"><a href="#cb64-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-59"><a href="#cb64-59" aria-hidden="true" tabindex="-1"></a>We'll start by cleaning up the names with the janitor package. The convention is lowercase and joined by underscores. </span>
+<span id="cb64-60"><a href="#cb64-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-63"><a href="#cb64-63" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-64"><a href="#cb64-64" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("janitor")</span></span>
+<span id="cb64-65"><a href="#cb64-65" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
+<span id="cb64-66"><a href="#cb64-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-67"><a href="#cb64-67" aria-hidden="true" tabindex="-1"></a><span class="co"># use help("library_name") for a description</span></span>
+<span id="cb64-68"><a href="#cb64-68" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(<span class="st">"janitor"</span>) </span>
+<span id="cb64-69"><a href="#cb64-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-70"><a href="#cb64-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-71"><a href="#cb64-71" aria-hidden="true" tabindex="-1"></a><span class="co"># Syntax method 1 (on TCQ)</span></span>
+<span id="cb64-72"><a href="#cb64-72" aria-hidden="true" tabindex="-1"></a>tcq_data_raw <span class="ot">&lt;-</span> <span class="fu">clean_names</span>(tcq_data_raw)</span>
+<span id="cb64-73"><a href="#cb64-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-74"><a href="#cb64-74" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(tcq_data_raw)</span>
+<span id="cb64-75"><a href="#cb64-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-76"><a href="#cb64-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-77"><a href="#cb64-77" aria-hidden="true" tabindex="-1"></a><span class="co"># Syntax method 2 (on TC)</span></span>
+<span id="cb64-78"><a href="#cb64-78" aria-hidden="true" tabindex="-1"></a>tc_data_raw <span class="ot">&lt;-</span> tc_data_raw <span class="sc">%&gt;%</span></span>
+<span id="cb64-79"><a href="#cb64-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>()</span>
+<span id="cb64-80"><a href="#cb64-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-81"><a href="#cb64-81" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(tc_data_raw)</span>
+<span id="cb64-82"><a href="#cb64-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-83"><a href="#cb64-83" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-84"><a href="#cb64-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-85"><a href="#cb64-85" aria-hidden="true" tabindex="-1"></a><span class="fu">### Select columns of interest</span></span>
+<span id="cb64-86"><a href="#cb64-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-87"><a href="#cb64-87" aria-hidden="true" tabindex="-1"></a>Now we'll use a function from a library called dplyr to retain only the columns we want. Let's keep:</span>
+<span id="cb64-88"><a href="#cb64-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-89"><a href="#cb64-89" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>author_full_names</span>
+<span id="cb64-90"><a href="#cb64-90" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>article_title</span>
+<span id="cb64-91"><a href="#cb64-91" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>source_title</span>
+<span id="cb64-92"><a href="#cb64-92" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>abstract</span>
+<span id="cb64-93"><a href="#cb64-93" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>cited_references</span>
+<span id="cb64-94"><a href="#cb64-94" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>cited_reference_count</span>
+<span id="cb64-95"><a href="#cb64-95" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>publication_year</span>
+<span id="cb64-96"><a href="#cb64-96" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>publication_type</span>
+<span id="cb64-97"><a href="#cb64-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-98"><a href="#cb64-98" aria-hidden="true" tabindex="-1"></a>First on TCQ</span>
+<span id="cb64-99"><a href="#cb64-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-102"><a href="#cb64-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-103"><a href="#cb64-103" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb64-104"><a href="#cb64-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-105"><a href="#cb64-105" aria-hidden="true" tabindex="-1"></a><span class="co"># the select function from dplyr on TCQ data</span></span>
+<span id="cb64-106"><a href="#cb64-106" aria-hidden="true" tabindex="-1"></a>tcq_clean <span class="ot">&lt;-</span> tcq_data_raw <span class="sc">%&gt;%</span></span>
+<span id="cb64-107"><a href="#cb64-107" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(author_full_names,</span>
+<span id="cb64-108"><a href="#cb64-108" aria-hidden="true" tabindex="-1"></a>         article_title,</span>
+<span id="cb64-109"><a href="#cb64-109" aria-hidden="true" tabindex="-1"></a>         source_title,</span>
+<span id="cb64-110"><a href="#cb64-110" aria-hidden="true" tabindex="-1"></a>         abstract,</span>
+<span id="cb64-111"><a href="#cb64-111" aria-hidden="true" tabindex="-1"></a>         cited_references,</span>
+<span id="cb64-112"><a href="#cb64-112" aria-hidden="true" tabindex="-1"></a>         cited_reference_count,</span>
+<span id="cb64-113"><a href="#cb64-113" aria-hidden="true" tabindex="-1"></a>         publication_year,</span>
+<span id="cb64-114"><a href="#cb64-114" aria-hidden="true" tabindex="-1"></a>         publication_type)</span>
+<span id="cb64-115"><a href="#cb64-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-116"><a href="#cb64-116" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(tcq_clean)</span>
+<span id="cb64-117"><a href="#cb64-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-118"><a href="#cb64-118" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-119"><a href="#cb64-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-120"><a href="#cb64-120" aria-hidden="true" tabindex="-1"></a>Now on TC</span>
+<span id="cb64-121"><a href="#cb64-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-124"><a href="#cb64-124" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-125"><a href="#cb64-125" aria-hidden="true" tabindex="-1"></a><span class="co"># the select function from dplyr on TCQ data</span></span>
+<span id="cb64-126"><a href="#cb64-126" aria-hidden="true" tabindex="-1"></a>tc_clean <span class="ot">&lt;-</span> tc_data_raw <span class="sc">%&gt;%</span></span>
+<span id="cb64-127"><a href="#cb64-127" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(author_full_names,</span>
+<span id="cb64-128"><a href="#cb64-128" aria-hidden="true" tabindex="-1"></a>         article_title,</span>
+<span id="cb64-129"><a href="#cb64-129" aria-hidden="true" tabindex="-1"></a>         source_title,</span>
+<span id="cb64-130"><a href="#cb64-130" aria-hidden="true" tabindex="-1"></a>         abstract,</span>
+<span id="cb64-131"><a href="#cb64-131" aria-hidden="true" tabindex="-1"></a>         cited_references,</span>
+<span id="cb64-132"><a href="#cb64-132" aria-hidden="true" tabindex="-1"></a>         cited_reference_count,</span>
+<span id="cb64-133"><a href="#cb64-133" aria-hidden="true" tabindex="-1"></a>         publication_year,</span>
+<span id="cb64-134"><a href="#cb64-134" aria-hidden="true" tabindex="-1"></a>         publication_type)</span>
+<span id="cb64-135"><a href="#cb64-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-136"><a href="#cb64-136" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(tc_clean)</span>
+<span id="cb64-137"><a href="#cb64-137" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-138"><a href="#cb64-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-139"><a href="#cb64-139" aria-hidden="true" tabindex="-1"></a><span class="fu">### Combine the two sets</span></span>
+<span id="cb64-140"><a href="#cb64-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-143"><a href="#cb64-143" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-144"><a href="#cb64-144" aria-hidden="true" tabindex="-1"></a>both_data <span class="ot">&lt;-</span> <span class="fu">rbind</span>(tcq_clean, tc_clean)</span>
+<span id="cb64-145"><a href="#cb64-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-146"><a href="#cb64-146" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(both_data)</span>
+<span id="cb64-147"><a href="#cb64-147" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-148"><a href="#cb64-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-149"><a href="#cb64-149" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exploring the data</span></span>
+<span id="cb64-150"><a href="#cb64-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-151"><a href="#cb64-151" aria-hidden="true" tabindex="-1"></a><span class="fu">### Some quick ways to examine at a high level</span></span>
+<span id="cb64-152"><a href="#cb64-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-155"><a href="#cb64-155" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-156"><a href="#cb64-156" aria-hidden="true" tabindex="-1"></a><span class="co"># provides overview of numeric variables</span></span>
+<span id="cb64-157"><a href="#cb64-157" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(both_data) </span>
+<span id="cb64-158"><a href="#cb64-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-159"><a href="#cb64-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-160"><a href="#cb64-160" aria-hidden="true" tabindex="-1"></a><span class="co"># overview of target column</span></span>
+<span id="cb64-161"><a href="#cb64-161" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(both_data<span class="sc">$</span>publication_year)</span>
+<span id="cb64-162"><a href="#cb64-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-163"><a href="#cb64-163" aria-hidden="true" tabindex="-1"></a><span class="co"># for each column, shows data types and first few observations</span></span>
+<span id="cb64-164"><a href="#cb64-164" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(both_data) </span>
+<span id="cb64-165"><a href="#cb64-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-166"><a href="#cb64-166" aria-hidden="true" tabindex="-1"></a><span class="co"># shows first few rows</span></span>
+<span id="cb64-167"><a href="#cb64-167" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(both_data)</span>
+<span id="cb64-168"><a href="#cb64-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-169"><a href="#cb64-169" aria-hidden="true" tabindex="-1"></a><span class="co"># shows the first n rows</span></span>
+<span id="cb64-170"><a href="#cb64-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-171"><a href="#cb64-171" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(both_data, <span class="at">n =</span> <span class="dv">10</span>)</span>
+<span id="cb64-172"><a href="#cb64-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-173"><a href="#cb64-173" aria-hidden="true" tabindex="-1"></a><span class="co">#shows last few rows</span></span>
+<span id="cb64-174"><a href="#cb64-174" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(both_data)</span>
+<span id="cb64-175"><a href="#cb64-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-176"><a href="#cb64-176" aria-hidden="true" tabindex="-1"></a><span class="co"># creates a frequency table for a categorical variable </span></span>
+<span id="cb64-177"><a href="#cb64-177" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(both_data<span class="sc">$</span>publication_year) </span>
+<span id="cb64-178"><a href="#cb64-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-179"><a href="#cb64-179" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-180"><a href="#cb64-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-181"><a href="#cb64-181" aria-hidden="true" tabindex="-1"></a><span class="fu">### Visualize</span></span>
+<span id="cb64-182"><a href="#cb64-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-183"><a href="#cb64-183" aria-hidden="true" tabindex="-1"></a>Let's create some exploratory visualizations. </span>
+<span id="cb64-184"><a href="#cb64-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-185"><a href="#cb64-185" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Visualize the articles published by year</span></span>
+<span id="cb64-186"><a href="#cb64-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-189"><a href="#cb64-189" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-190"><a href="#cb64-190" aria-hidden="true" tabindex="-1"></a><span class="co"># count of articles by year</span></span>
+<span id="cb64-191"><a href="#cb64-191" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(both_data, <span class="fu">aes</span>(<span class="at">x =</span> publication_year)) <span class="sc">+</span></span>
+<span id="cb64-192"><a href="#cb64-192" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb64-193"><a href="#cb64-193" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Articles per Year in TC and TCQ"</span>,</span>
+<span id="cb64-194"><a href="#cb64-194" aria-hidden="true" tabindex="-1"></a>       <span class="at">X =</span> <span class="st">"Publication Year"</span>,</span>
+<span id="cb64-195"><a href="#cb64-195" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Number of Articles"</span>) <span class="sc">+</span></span>
+<span id="cb64-196"><a href="#cb64-196" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>()</span>
+<span id="cb64-197"><a href="#cb64-197" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-198"><a href="#cb64-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-199"><a href="#cb64-199" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Add another variable to the display</span></span>
+<span id="cb64-200"><a href="#cb64-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-203"><a href="#cb64-203" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-204"><a href="#cb64-204" aria-hidden="true" tabindex="-1"></a><span class="co"># count of articles by year, by journal</span></span>
+<span id="cb64-205"><a href="#cb64-205" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(both_data, <span class="fu">aes</span>(<span class="at">x =</span> publication_year, <span class="at">fill =</span> source_title)) <span class="sc">+</span></span>
+<span id="cb64-206"><a href="#cb64-206" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb64-207"><a href="#cb64-207" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Articles per Year in TC and TCQ"</span>,</span>
+<span id="cb64-208"><a href="#cb64-208" aria-hidden="true" tabindex="-1"></a>       <span class="at">X =</span> <span class="st">"Publication Year"</span>,</span>
+<span id="cb64-209"><a href="#cb64-209" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Number of Articles"</span>) <span class="sc">+</span></span>
+<span id="cb64-210"><a href="#cb64-210" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>()</span>
+<span id="cb64-211"><a href="#cb64-211" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-212"><a href="#cb64-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-213"><a href="#cb64-213" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Create two displays using facet wrap</span></span>
+<span id="cb64-214"><a href="#cb64-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-217"><a href="#cb64-217" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-218"><a href="#cb64-218" aria-hidden="true" tabindex="-1"></a><span class="co"># count of articles by year, by journal</span></span>
+<span id="cb64-219"><a href="#cb64-219" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(both_data, <span class="fu">aes</span>(<span class="at">x =</span> publication_year)) <span class="sc">+</span></span>
+<span id="cb64-220"><a href="#cb64-220" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb64-221"><a href="#cb64-221" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Articles per Year in TC and TCQ"</span>,</span>
+<span id="cb64-222"><a href="#cb64-222" aria-hidden="true" tabindex="-1"></a>       <span class="at">X =</span> <span class="st">"Publication Year"</span>,</span>
+<span id="cb64-223"><a href="#cb64-223" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Number of Articles"</span>) <span class="sc">+</span></span>
+<span id="cb64-224"><a href="#cb64-224" aria-hidden="true" tabindex="-1"></a>   <span class="fu">facet_wrap</span>(<span class="sc">~</span> source_title, <span class="at">ncol =</span> <span class="dv">2</span>) <span class="co"># Change ncol as needed</span></span>
+<span id="cb64-225"><a href="#cb64-225" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb64-226"><a href="#cb64-226" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-227"><a href="#cb64-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-228"><a href="#cb64-228" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Spice things up with a theme from ggthemes</span></span>
+<span id="cb64-229"><a href="#cb64-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-230"><a href="#cb64-230" aria-hidden="true" tabindex="-1"></a>Check out this <span class="co">[</span><span class="ot">ggthemes gallery</span><span class="co">](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/)</span></span>
+<span id="cb64-231"><a href="#cb64-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-234"><a href="#cb64-234" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-235"><a href="#cb64-235" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("ggthemes")</span></span>
+<span id="cb64-236"><a href="#cb64-236" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggthemes)</span>
+<span id="cb64-237"><a href="#cb64-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-238"><a href="#cb64-238" aria-hidden="true" tabindex="-1"></a><span class="co"># count of articles by year, by journal</span></span>
+<span id="cb64-239"><a href="#cb64-239" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(both_data, <span class="fu">aes</span>(<span class="at">x =</span> publication_year)) <span class="sc">+</span></span>
+<span id="cb64-240"><a href="#cb64-240" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb64-241"><a href="#cb64-241" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Articles per Year in TC and TCQ"</span>,</span>
+<span id="cb64-242"><a href="#cb64-242" aria-hidden="true" tabindex="-1"></a>       <span class="at">X =</span> <span class="st">"Publication Year"</span>,</span>
+<span id="cb64-243"><a href="#cb64-243" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Number of Articles"</span>) <span class="sc">+</span></span>
+<span id="cb64-244"><a href="#cb64-244" aria-hidden="true" tabindex="-1"></a>   <span class="fu">facet_wrap</span>(<span class="sc">~</span> source_title, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb64-245"><a href="#cb64-245" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_economist</span>()</span>
+<span id="cb64-246"><a href="#cb64-246" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-247"><a href="#cb64-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-248"><a href="#cb64-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-251"><a href="#cb64-251" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-252"><a href="#cb64-252" aria-hidden="true" tabindex="-1"></a><span class="co"># count of articles by year, by journal</span></span>
+<span id="cb64-253"><a href="#cb64-253" aria-hidden="true" tabindex="-1"></a>year_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(both_data, <span class="fu">aes</span>(<span class="at">x =</span> publication_year)) <span class="sc">+</span></span>
+<span id="cb64-254"><a href="#cb64-254" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb64-255"><a href="#cb64-255" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Articles per Year in TC and TCQ"</span>,</span>
+<span id="cb64-256"><a href="#cb64-256" aria-hidden="true" tabindex="-1"></a>       <span class="at">X =</span> <span class="st">"Publication Year"</span>,</span>
+<span id="cb64-257"><a href="#cb64-257" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Number of Articles"</span>) <span class="sc">+</span></span>
+<span id="cb64-258"><a href="#cb64-258" aria-hidden="true" tabindex="-1"></a>   <span class="fu">facet_wrap</span>(<span class="sc">~</span> source_title, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb64-259"><a href="#cb64-259" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_economist_white</span>()</span>
+<span id="cb64-260"><a href="#cb64-260" aria-hidden="true" tabindex="-1"></a>year_plot</span>
+<span id="cb64-261"><a href="#cb64-261" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-262"><a href="#cb64-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-263"><a href="#cb64-263" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Add labels above the bars</span></span>
+<span id="cb64-264"><a href="#cb64-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-267"><a href="#cb64-267" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-268"><a href="#cb64-268" aria-hidden="true" tabindex="-1"></a><span class="co"># add labels above the bars</span></span>
+<span id="cb64-269"><a href="#cb64-269" aria-hidden="true" tabindex="-1"></a>year_plot <span class="ot">&lt;-</span> year_plot <span class="sc">+</span></span>
+<span id="cb64-270"><a href="#cb64-270" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">stat =</span> <span class="st">'count'</span>, <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">after_stat</span>(count)), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">4</span>)</span>
+<span id="cb64-271"><a href="#cb64-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-272"><a href="#cb64-272" aria-hidden="true" tabindex="-1"></a>year_plot</span>
+<span id="cb64-273"><a href="#cb64-273" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-274"><a href="#cb64-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-275"><a href="#cb64-275" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Save the chart</span></span>
+<span id="cb64-276"><a href="#cb64-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-279"><a href="#cb64-279" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-280"><a href="#cb64-280" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(ggsave)</span>
+<span id="cb64-281"><a href="#cb64-281" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"plots/articles_barplot.png"</span>, </span>
+<span id="cb64-282"><a href="#cb64-282" aria-hidden="true" tabindex="-1"></a>       <span class="at">plot =</span> year_plot, </span>
+<span id="cb64-283"><a href="#cb64-283" aria-hidden="true" tabindex="-1"></a>       <span class="at">width =</span> <span class="dv">8</span>, </span>
+<span id="cb64-284"><a href="#cb64-284" aria-hidden="true" tabindex="-1"></a>       <span class="at">height =</span> <span class="dv">6</span>, </span>
+<span id="cb64-285"><a href="#cb64-285" aria-hidden="true" tabindex="-1"></a>       <span class="at">dpi =</span> <span class="dv">300</span>,</span>
+<span id="cb64-286"><a href="#cb64-286" aria-hidden="true" tabindex="-1"></a>       <span class="at">bg =</span> <span class="cn">NULL</span>)</span>
+<span id="cb64-287"><a href="#cb64-287" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-288"><a href="#cb64-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-289"><a href="#cb64-289" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Save our dataset</span></span>
+<span id="cb64-290"><a href="#cb64-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-293"><a href="#cb64-293" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-294"><a href="#cb64-294" aria-hidden="true" tabindex="-1"></a><span class="co"># save as csv</span></span>
+<span id="cb64-295"><a href="#cb64-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-296"><a href="#cb64-296" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(both_data, <span class="st">"data_out/both_data.csv"</span>)</span>
+<span id="cb64-297"><a href="#cb64-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-298"><a href="#cb64-298" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(both_data, <span class="at">file =</span> <span class="st">"data_out/your_file.RData"</span>)</span>
+<span id="cb64-299"><a href="#cb64-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-300"><a href="#cb64-300" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-301"><a href="#cb64-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-302"><a href="#cb64-302" aria-hidden="true" tabindex="-1"></a><span class="fu">## Analyzing text columns</span></span>
+<span id="cb64-303"><a href="#cb64-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-304"><a href="#cb64-304" aria-hidden="true" tabindex="-1"></a>Let's do some analysis on the article_title and abstract columns</span>
+<span id="cb64-305"><a href="#cb64-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-306"><a href="#cb64-306" aria-hidden="true" tabindex="-1"></a><span class="fu">### View the text data</span></span>
+<span id="cb64-309"><a href="#cb64-309" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-310"><a href="#cb64-310" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(both_data<span class="sc">$</span>article_title)</span>
+<span id="cb64-311"><a href="#cb64-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-312"><a href="#cb64-312" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(both_data<span class="sc">$</span>abstract)</span>
+<span id="cb64-313"><a href="#cb64-313" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-314"><a href="#cb64-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-315"><a href="#cb64-315" aria-hidden="true" tabindex="-1"></a><span class="fu">### Create a title_abstract column</span></span>
+<span id="cb64-316"><a href="#cb64-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-319"><a href="#cb64-319" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-320"><a href="#cb64-320" aria-hidden="true" tabindex="-1"></a><span class="co"># using paste() to combine the two columns with a tilde separator; mutate to create a new column in the data</span></span>
+<span id="cb64-321"><a href="#cb64-321" aria-hidden="true" tabindex="-1"></a>ta_data <span class="ot">&lt;-</span> both_data <span class="sc">%&gt;%</span></span>
+<span id="cb64-322"><a href="#cb64-322" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">title_abstract =</span> <span class="fu">paste</span>(article_title, abstract, <span class="at">sep =</span> <span class="st">" ~ "</span>)) </span>
+<span id="cb64-323"><a href="#cb64-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-324"><a href="#cb64-324" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ta_data<span class="sc">$</span>title_abstract)</span>
+<span id="cb64-325"><a href="#cb64-325" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-326"><a href="#cb64-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-327"><a href="#cb64-327" aria-hidden="true" tabindex="-1"></a><span class="fu">### Using tidytext to analyze word distribution</span></span>
+<span id="cb64-328"><a href="#cb64-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-329"><a href="#cb64-329" aria-hidden="true" tabindex="-1"></a>We'll create a new dataframe in which each word-year pairing gets it's own row</span>
+<span id="cb64-332"><a href="#cb64-332" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-333"><a href="#cb64-333" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("tidytext")</span></span>
+<span id="cb64-334"><a href="#cb64-334" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
+<span id="cb64-335"><a href="#cb64-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-336"><a href="#cb64-336" aria-hidden="true" tabindex="-1"></a>ta_words_bysource <span class="ot">&lt;-</span> ta_data <span class="sc">%&gt;%</span></span>
+<span id="cb64-337"><a href="#cb64-337" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, title_abstract) <span class="sc">%&gt;%</span></span>
+<span id="cb64-338"><a href="#cb64-338" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(source_title, word, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb64-339"><a href="#cb64-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-340"><a href="#cb64-340" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ta_words_bysource, <span class="at">n =</span> <span class="dv">15</span>)</span>
+<span id="cb64-341"><a href="#cb64-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-342"><a href="#cb64-342" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-343"><a href="#cb64-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-344"><a href="#cb64-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-345"><a href="#cb64-345" aria-hidden="true" tabindex="-1"></a>Now we'll get the total word count for each source</span>
+<span id="cb64-346"><a href="#cb64-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-349"><a href="#cb64-349" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-350"><a href="#cb64-350" aria-hidden="true" tabindex="-1"></a>ta_words_total <span class="ot">&lt;-</span> ta_words_bysource <span class="sc">%&gt;%</span></span>
+<span id="cb64-351"><a href="#cb64-351" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(source_title) <span class="sc">%&gt;%</span></span>
+<span id="cb64-352"><a href="#cb64-352" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total =</span> <span class="fu">sum</span>(n))</span>
+<span id="cb64-353"><a href="#cb64-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-354"><a href="#cb64-354" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ta_words_total)</span>
+<span id="cb64-355"><a href="#cb64-355" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-356"><a href="#cb64-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-357"><a href="#cb64-357" aria-hidden="true" tabindex="-1"></a>Use join to add the total words by source as a new column to the source-specific word counts</span>
+<span id="cb64-358"><a href="#cb64-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-361"><a href="#cb64-361" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-362"><a href="#cb64-362" aria-hidden="true" tabindex="-1"></a>ta_words_year <span class="ot">&lt;-</span> <span class="fu">left_join</span>(ta_words_bysource, ta_words_total)</span>
+<span id="cb64-363"><a href="#cb64-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-364"><a href="#cb64-364" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ta_words_year, <span class="at">n =</span> <span class="dv">20</span>)</span>
+<span id="cb64-365"><a href="#cb64-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-366"><a href="#cb64-366" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(ta_words_year, <span class="at">n =</span> <span class="dv">20</span>)</span>
+<span id="cb64-367"><a href="#cb64-367" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-368"><a href="#cb64-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-369"><a href="#cb64-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-370"><a href="#cb64-370" aria-hidden="true" tabindex="-1"></a>Visualize the distribution of words in each source</span>
+<span id="cb64-371"><a href="#cb64-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-374"><a href="#cb64-374" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-375"><a href="#cb64-375" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ta_words_year, <span class="fu">aes</span>(n<span class="sc">/</span>total, <span class="at">fill =</span> source_title)) <span class="sc">+</span></span>
+<span id="cb64-376"><a href="#cb64-376" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb64-377"><a href="#cb64-377" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="cn">NA</span>, <span class="fl">0.0009</span>) <span class="sc">+</span></span>
+<span id="cb64-378"><a href="#cb64-378" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>source_title, <span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">scales =</span> <span class="st">"free_y"</span>)</span>
+<span id="cb64-379"><a href="#cb64-379" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-380"><a href="#cb64-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-381"><a href="#cb64-381" aria-hidden="true" tabindex="-1"></a><span class="fu">## TFIDF</span></span>
+<span id="cb64-382"><a href="#cb64-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-383"><a href="#cb64-383" aria-hidden="true" tabindex="-1"></a>Term frequency - Inverse Document Frequency</span>
+<span id="cb64-384"><a href="#cb64-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-385"><a href="#cb64-385" aria-hidden="true" tabindex="-1"></a><span class="fu">### Bind_tf_idf</span></span>
+<span id="cb64-386"><a href="#cb64-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-387"><a href="#cb64-387" aria-hidden="true" tabindex="-1"></a>input: one row per term per document </span>
+<span id="cb64-388"><a href="#cb64-388" aria-hidden="true" tabindex="-1"></a>output: ???</span>
+<span id="cb64-389"><a href="#cb64-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-392"><a href="#cb64-392" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-393"><a href="#cb64-393" aria-hidden="true" tabindex="-1"></a>ta_tf_idf <span class="ot">&lt;-</span> ta_words_year <span class="sc">%&gt;%</span></span>
+<span id="cb64-394"><a href="#cb64-394" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_tf_idf</span>(word, source_title, n)</span>
+<span id="cb64-395"><a href="#cb64-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-396"><a href="#cb64-396" aria-hidden="true" tabindex="-1"></a><span class="co"># most common words</span></span>
+<span id="cb64-397"><a href="#cb64-397" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ta_tf_idf)</span>
+<span id="cb64-398"><a href="#cb64-398" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-399"><a href="#cb64-399" aria-hidden="true" tabindex="-1"></a><span class="co"># least common words</span></span>
+<span id="cb64-400"><a href="#cb64-400" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(ta_tf_idf)</span>
+<span id="cb64-401"><a href="#cb64-401" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-402"><a href="#cb64-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-403"><a href="#cb64-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-404"><a href="#cb64-404" aria-hidden="true" tabindex="-1"></a>Arrange in descending order by tf-idf (highest tf-idf words)</span>
+<span id="cb64-407"><a href="#cb64-407" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-408"><a href="#cb64-408" aria-hidden="true" tabindex="-1"></a>ta_tf_idf <span class="sc">%&gt;%</span></span>
+<span id="cb64-409"><a href="#cb64-409" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>total) <span class="sc">%&gt;%</span></span>
+<span id="cb64-410"><a href="#cb64-410" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(tf_idf))</span>
+<span id="cb64-411"><a href="#cb64-411" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-412"><a href="#cb64-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-413"><a href="#cb64-413" aria-hidden="true" tabindex="-1"></a><span class="fu">### Visualize high tf-idf words in each journal</span></span>
+<span id="cb64-416"><a href="#cb64-416" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb64-417"><a href="#cb64-417" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb64-418"><a href="#cb64-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-419"><a href="#cb64-419" aria-hidden="true" tabindex="-1"></a>ta_tf_idf <span class="sc">%&gt;%</span></span>
+<span id="cb64-420"><a href="#cb64-420" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(source_title) <span class="sc">%&gt;%</span></span>
+<span id="cb64-421"><a href="#cb64-421" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(tf_idf, <span class="at">n =</span> <span class="dv">25</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb64-422"><a href="#cb64-422" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb64-423"><a href="#cb64-423" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(tf_idf, <span class="fu">fct_reorder</span>(word, tf_idf), <span class="at">fill =</span> source_title)) <span class="sc">+</span></span>
+<span id="cb64-424"><a href="#cb64-424" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb64-425"><a href="#cb64-425" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>source_title, <span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb64-426"><a href="#cb64-426" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"tf-idf"</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span>
+<span id="cb64-427"><a href="#cb64-427" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-428"><a href="#cb64-428" aria-hidden="true" tabindex="-1"></a></span>
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+</body></html>
